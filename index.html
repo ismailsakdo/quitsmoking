@@ -77,6 +77,7 @@
         <!-- Quit Date & Settings -->
         <div class="bg-white bg-opacity-15 rounded-lg p-4 mb-6 border border-white border-opacity-20 flex flex-col items-center">
             <p class="text-lg font-semibold mb-2">Quit Date: <span id="displayQuitDate">Not set</span></p>
+            <p id="quitDateInstruction" class="text-sm text-gray-300 mb-2 hidden">Please set your quit date in settings to start the counter!</p>
             <button id="openSettingsModalBtn" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
                 Set Quit Date
             </button>
@@ -255,6 +256,7 @@
         // DOM elements
         const userIdDisplay = document.getElementById('userIdDisplay');
         const displayQuitDate = document.getElementById('displayQuitDate');
+        const quitDateInstruction = document.getElementById('quitDateInstruction'); // New instruction element
         const timeDays = document.getElementById('timeDays');
         const timeHours = document.getElementById('timeHours');
         const timeMinutes = document.getElementById('timeMinutes');
@@ -394,8 +396,10 @@
                 timeMinutes.textContent = 0;
                 timeSeconds.textContent = 0;
                 moneySavedDisplay.textContent = 'RM 0.00';
+                quitDateInstruction.classList.remove('hidden'); // Show instruction
                 return;
             }
+            quitDateInstruction.classList.add('hidden'); // Hide instruction if date is set
 
             const now = new Date();
             const diff = now.getTime() - quitDate.getTime(); // Difference in milliseconds
@@ -447,6 +451,15 @@
             costPerPack = savedData.costPerPack || 15;
             cravings = savedData.cravings || [];
             renderCravings(); // Render any loaded cravings
+
+            // Log the loaded quitDate for debugging
+            console.log("Loaded quitDate from localStorage:", quitDate);
+            if (!quitDate) {
+                console.log("Quit date not set. Counter will show zeros. Please set it in settings.");
+                quitDateInstruction.classList.remove('hidden'); // Show instruction on load if no date
+            } else {
+                quitDateInstruction.classList.add('hidden'); // Hide if date is set
+            }
 
             // Start progress update interval
             setInterval(updateProgress, 1000);
